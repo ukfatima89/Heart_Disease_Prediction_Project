@@ -1,20 +1,20 @@
 # app/main.py
 
 from fastapi import FastAPI
-from app.schemas import IrisInput, PredictionOutput
+from app.schemas import HeartDiseaseInput, PredictionOutput
 import joblib
 import numpy as np
 
 # Load the model once at startup
-model = joblib.load("model/iris_model.joblib")
+model = joblib.load("model/heart_disease_model.joblib")
 
-# Iris class names for readability
-class_names = ['setosa', 'versicolor', 'virginica']
+# Heart disease class names for readability
+class_names = [0, 1]
 
 # Create FastAPI app
 app = FastAPI(
-    title="Iris Classifier API",
-    description="API for predicting Iris species using FastAPI",
+    title="Heart Disease Prediction API",
+    description="API for predicting heart disease using FastAPI",
     version="1.0"
 )
 
@@ -32,9 +32,9 @@ def model_info():
     }
 
 @app.post("/predict", response_model=PredictionOutput)
-def predict_species(data: IrisInput):
+def predict_heart_disease(data: HeartDiseaseInput):
     """Make prediction from input features"""
-    features = np.array([[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]])
+    features = np.array([[data.age, data.sex, data.cp, data.trestbps, data.chol, data.fbs, data.restecg, data.thalach, data.exang, data.oldpeak, data.slope, data.ca, data.thal]])
     prediction = model.predict(features)[0]
     predicted_class = class_names[prediction]
     return {"predicted_class": predicted_class}
